@@ -1,7 +1,34 @@
-const express = require('express');
+import express from 'express';
+import {
+  getPendingWholesaleCustomers,
+  approveWholesaleCustomer,
+  rejectWholesaleCustomer
+} from '../controllers/customer.controller.js';
+
+import { verifyUser } from '../middlewares/auth.middleware.js';
+import { allowRoles } from '../middlewares/role.middleware.js';
+
 const router = express.Router();
 
-// TODO: implement customer controller routes
-router.get('/', (req, res) => res.json({ message: 'List customers' }));
+router.get(
+  '/pending',
+  verifyUser,
+  allowRoles('ADMIN'),
+  getPendingWholesaleCustomers
+);
 
-module.exports = router;
+router.put(
+  '/:id/approve',
+  verifyUser,
+  allowRoles('ADMIN'),
+  approveWholesaleCustomer
+);
+
+router.put(
+  '/:id/reject',
+  verifyUser,
+  allowRoles('ADMIN'),
+  rejectWholesaleCustomer
+);
+
+export default router;

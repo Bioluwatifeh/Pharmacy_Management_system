@@ -1,9 +1,17 @@
-// Role-based access middleware
-module.exports = function roleMiddleware(requiredRole) {
-  return (req, res, next) => {
-    const user = req.user;
-    if (!user) return res.status(401).json({ message: 'Unauthenticated' });
-    if (user.role !== requiredRole) return res.status(403).json({ message: 'Forbidden' });
+import { supabase } from '../config/supabaseClient.js';
+
+export const allowRoles = (...allowedRoles) => {
+  return async (req, res, next) => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('roles(name)')
+      .eq('id', req.user.id)
+      .single();
+
+    if (error || !allowedRoles.includes(data.roles.name)) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
     next();
   };
 };

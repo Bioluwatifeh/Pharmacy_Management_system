@@ -1,10 +1,6 @@
-// Minimal Supabase client wrapper (optional)
-const { createClient } = require('@supabase/supabase-js');
-const env = require('./env');
+import { createClient } from '@supabase/supabase-js';
 
-let supabase = null;
-if (env.SUPABASE_URL && env.SUPABASE_KEY) {
-  supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
-}
-
-module.exports = supabase;
+export const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);

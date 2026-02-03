@@ -1,17 +1,20 @@
-// Placeholder JWT auth middleware
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config/env');
+import { supabase } from '../config/supabaseClient.js';
 
-module.exports = function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ message: 'Missing authorization header' });
-
-  const token = authHeader.split(' ')[1];
+export const verifyUser = async (req, res, next) => {
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload;
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Missing token' });
+    }
+
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    req.user = data.user;
     next();
   } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
+    res.status(500).json({ message: 'Authentication failed' });
   }
 };

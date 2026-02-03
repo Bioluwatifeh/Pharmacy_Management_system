@@ -1,15 +1,15 @@
 import express from 'express';
-import { createUser } from '../controllers/user.controller.js';
+import { getInvoiceBySaleId } from '../controllers/invoice.controller.js';
 import { verifyUser } from '../middlewares/auth.middleware.js';
 import { allowRoles } from '../middlewares/role.middleware.js';
 
 const router = express.Router();
 
-router.post(
-  '/',
+router.get(
+  '/:saleId',
   verifyUser,
-  allowRoles('ADMIN'),
-  createUser
+  allowRoles('ADMIN', 'CASHIER'),
+  getInvoiceBySaleId
 );
 
 export default router;
