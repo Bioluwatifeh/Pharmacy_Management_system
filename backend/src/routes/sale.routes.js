@@ -7,6 +7,8 @@ import {
   getRetailSaleById
 } from '../controllers/sale.controller.js';
 
+const router = express.Router();
+
 router.get(
   '/retail',
   verifyUser,
