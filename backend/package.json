@@ -1,0 +1,14 @@
+{
+  "name": "pharm-backend",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "@supabase/supabase-js": "^2.0.0"
+  }
+}
