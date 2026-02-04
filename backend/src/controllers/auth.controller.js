@@ -18,11 +18,41 @@ export const login = async (req, res) => {
   });
 };
 
+// NEW: current user endpoint with ADMIN exception
+export const getCurrentUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Try to get role from users table
+    const { data, error } = await supabase
+      .from('users')
+      .select('roles(name)')
+      .eq('id', userId)
+      .single();
+
+    // 🔑 ADMIN EXCEPTION
+    if (error || !data) {
+      return res.json({
+        id: userId,
+        email: req.user.email,
+        role: 'ADMIN'
+      });
+    }
+
+    res.json({
+      id: userId,
+      email: req.user.email,
+      role: data.roles.name
+    });
+  } catch {
+    res.status(500).json({ message: 'Failed to fetch user' });
+  }
+};
+
 export const logout = async (req, res) => {
   await supabase.auth.signOut();
   res.json({ message: 'Logged out successfully' });
 };
-
 
 export const registerWholesaleCustomer = async (req, res) => {
   try {
@@ -72,4 +102,3 @@ export const registerWholesaleCustomer = async (req, res) => {
     res.status(500).json({ message: 'Registration failed' });
   }
 };
-
